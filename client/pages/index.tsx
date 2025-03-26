@@ -1,6 +1,10 @@
 import MedCard from "@/components/01home/medCard";
 import { useRouter } from "next/router";
 
+import type { ReactElement } from "react";
+import type { NextPageWithLayout } from "./_app";
+import Layout from "@/components/layout";
+
 const med_items = [
   "All",
   "Tablet",
@@ -22,10 +26,10 @@ const med_items = [
   "Sedative",
 ];
 
-export default function Home() {
+const Home: NextPageWithLayout = () => {
   const router = useRouter();
   return (
-    <div className="h-full p-6 bg-zinc-300 flex flex-col gap-6">
+    <div className="w-full h-full p-6 bg-zinc-300 flex flex-col gap-6">
       <div className="flex justify-between">
         <h2 className="text-2xl text-black font-semibold">Medicines</h2>
         <p
@@ -92,4 +96,10 @@ export default function Home() {
       </div>
     </div>
   );
-}
+};
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  return <Layout>{page}</Layout>;
+};
+
+export default Home;
