@@ -23,15 +23,15 @@ const NavBar = () => {
           aria-label="Search"
         />
       </div>
-      <div className="text-black text-2xl outline-2 outline-zinc-300 w-fit py-1 px-2 rounded-xl flex justify-center items-center gap-2">
+      <div className="text-black text-2xl outline-2 outline-zinc-300 w-fit py-1 px-2 rounded-xl flex justify-center items-center gap-2 cursor-pointer hover:bg-zinc-200">
         <LuTicketPercent />
         <div className="text-sm text-nowrap">Use Voucher</div>
       </div>
-      <div className="text-black text-2xl outline-2 outline-zinc-300 w-fit py-1 px-2 rounded-xl flex justify-center items-center gap-2">
+      <div className="text-black text-2xl outline-2 outline-zinc-300 w-fit py-1 px-2 rounded-xl flex justify-center items-center gap-2 cursor-pointer hover:bg-zinc-200">
         <TbScan />
         <div className="text-sm text-nowrap">Scan Preparation</div>
       </div>
-      <div className="text-black text-2xl outline-2 outline-zinc-300 p-1 rounded-xl flex justify-center items-center">
+      <div className="text-black text-2xl outline-2 outline-zinc-300 p-1 rounded-xl flex justify-center items-center cursor-pointer">
         <IoIosNotificationsOutline />
       </div>
       <div className="h-9 w-9 bg-zinc-300 rounded-full"></div>
