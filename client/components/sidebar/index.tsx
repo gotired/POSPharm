@@ -11,7 +11,7 @@ const SideBar = ({ pathname }: sideBarProp) => {
     <div className="h-full w-full max-w-[200px] bg-zinc-900 flex flex-col justify-between">
       <div>
         <div
-          className="py-6 flex items-center gap-4 p-6"
+          className="flex items-center gap-4 p-6 cursor-pointer"
           onClick={() => router.push("/")}
         >
           <div className="bg-green-500 rounded-md p-1">
@@ -28,7 +28,7 @@ const SideBar = ({ pathname }: sideBarProp) => {
                 <div
                   key={index}
                   onClick={() => router.push(item.endpoint)}
-                  className={`flex gap-6 p-1 items-center transition duration-300 ease-in-out bg-linear-to-r/srgb ${
+                  className={`flex gap-6 p-1 items-center transition duration-300 ease-in-out bg-linear-to-r/srgb cursor-pointer ${
                     pathname === item.endpoint
                       ? "from-green-950"
                       : "hover:from-zinc-700"
@@ -48,7 +48,10 @@ const SideBar = ({ pathname }: sideBarProp) => {
           </Fragment>
         ))}
       </div>
-      <div className="flex gap-6 pb-4 items-center">
+      <div
+        onClick={() => router.push("/login")}
+        className="flex gap-6 pb-4 items-center cursor-pointer"
+      >
         <div className="pl-6 py-2 text-2xl">
           <IoLogOutOutline />
         </div>
