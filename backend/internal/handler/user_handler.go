@@ -8,23 +8,23 @@ import (
 	"github.com/gotired/POSPharm/internal/usecase"
 )
 
-type UserHandler struct {
-	userUsecase usecase.UserUsecase
+type User struct {
+	userUsecase usecase.User
 }
 
-func NewUserHandler(userUsecase usecase.UserUsecase) *UserHandler {
-	return &UserHandler{userUsecase: userUsecase}
+func NewUser(userUsecase usecase.User) *User {
+	return &User{userUsecase: userUsecase}
 }
 
-func (h *UserHandler) GetUsers(c *fiber.Ctx) error {
+func (h *User) List(c *fiber.Ctx) error {
 	users, err := h.userUsecase.GetUsers()
 	if err != nil {
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
-	return c.JSON(users)
+	return c.JSON(fiber.Map{"data": users})
 }
 
-func (h *UserHandler) GetUser(c *fiber.Ctx) error {
+func (h *User) GetByID(c *fiber.Ctx) error {
 	id, err := strconv.Atoi(c.Params("id"))
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid ID"})
@@ -37,7 +37,7 @@ func (h *UserHandler) GetUser(c *fiber.Ctx) error {
 	return c.JSON(user)
 }
 
-func (h *UserHandler) CreateUser(c *fiber.Ctx) error {
+func (h *User) Create(c *fiber.Ctx) error {
 	var user domain.User
 	if err := c.BodyParser(&user); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
