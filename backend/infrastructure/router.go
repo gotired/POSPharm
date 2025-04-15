@@ -3,6 +3,7 @@ package infrastructure
 import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gotired/POSPharm/internal/handler"
+	"github.com/gotired/POSPharm/internal/middleware"
 	"github.com/gotired/POSPharm/internal/repository"
 	"github.com/gotired/POSPharm/internal/usecase"
 	"gorm.io/gorm"
@@ -11,16 +12,36 @@ import (
 func NewFiberApp(db *gorm.DB) *fiber.App {
 	app := fiber.New()
 
-	// Dependency Injection
-	userRepo := repository.NewUserRepository(db)
-	userUsecase := usecase.NewUserUsecase(userRepo)
-	userHandler := handler.NewUserHandler(userUsecase)
+	userRepo := repository.NewUser(db)
+	userCredentialRepo := repository.NewUserCredential(db)
+	roleRepo := repository.NewRole(db)
+	branchRepo := repository.NewBranch(db)
 
-	// Routes
+	userUsecase := usecase.NewUser(db, userRepo, userCredentialRepo)
+	roleUsecase := usecase.NewRole(roleRepo)
+	authUsecase := usecase.NewAuth()
+	branchUsecase := usecase.NewBranch(branchRepo)
+
+	userHandler := handler.NewUser(userUsecase)
+	authHandler := handler.NewAuth(userUsecase, authUsecase)
+	roleHandler := handler.NewRole(roleUsecase)
+	branchHandler := handler.NewBranch(branchUsecase)
+
+	appMiddleware := middleware.NewMiddleware(authUsecase)
+
 	api := app.Group("/api")
-	api.Get("/users", userHandler.GetUsers)
-	api.Get("/users/:id", userHandler.GetUser)
-	api.Post("/users", userHandler.CreateUser)
+
+	api.Post("/login", authHandler.Login)
+	api.Post("/register", authHandler.Register)
+
+	restrict := api.Group("")
+	restrict.Use(appMiddleware.JWT)
+
+	restrict.Get("/users", userHandler.List)
+	restrict.Get("/users/:id", userHandler.GetByID)
+
+	restrict.Get("/roles", roleHandler.List)
+	restrict.Get("/branches", branchHandler.List)
 
 	return app
 }
