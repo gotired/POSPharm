@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gotired/POSPharm/internal/domain"
 	"github.com/gotired/POSPharm/internal/usecase"
 )
 
@@ -35,16 +34,4 @@ func (h *User) GetByID(c *fiber.Ctx) error {
 		return c.Status(404).JSON(fiber.Map{"error": "User not found"})
 	}
 	return c.JSON(user)
-}
-
-func (h *User) Create(c *fiber.Ctx) error {
-	var user domain.User
-	if err := c.BodyParser(&user); err != nil {
-		return c.Status(400).JSON(fiber.Map{"error": "Invalid request"})
-	}
-
-	if err := h.userUsecase.RegisterUser(&user); err != nil {
-		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
-	}
-	return c.Status(201).JSON(user)
 }
