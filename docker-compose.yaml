@@ -1,0 +1,56 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: postgres_db
+    restart: always
+    env_file:
+      - db.env
+    ports:
+      - "5433:5432"
+    volumes:
+      - pos_pharm_data:/var/lib/postgresql/data
+    networks:
+      - pos_pharm_network
+
+  app:
+    build:
+      context: ./backend
+    container_name: go_app
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    networks:
+      - pos_pharm_network
+    profiles:
+      - prod
+
+  dev_app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: go_app_dev
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    networks:
+      - pos_pharm_network
+    profiles:
+      - dev
+
+volumes:
+  pos_pharm_data:
+
+
+networks:
+  pos_pharm_network:
+    driver: bridge
