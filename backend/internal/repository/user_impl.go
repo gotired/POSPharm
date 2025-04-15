@@ -5,32 +5,44 @@ import (
 	"gorm.io/gorm"
 )
 
-type userRepositoryImpl struct {
+type userRepoImpl struct {
 	db *gorm.DB
 }
 
 func NewUser(db *gorm.DB) User {
-	return &userRepositoryImpl{db: db}
+	return &userRepoImpl{db: db}
 }
 
-func (r *userRepositoryImpl) List() ([]domain.User, error) {
+func (r *userRepoImpl) List() ([]domain.User, error) {
 	var users []domain.User
 	err := r.db.Find(&users).Error
 	return users, err
 }
 
-func (r *userRepositoryImpl) GetByID(id uint) (*domain.User, error) {
+func (r *userRepoImpl) GetByID(id uint) (*domain.User, error) {
 	var user domain.User
 	err := r.db.First(&user, id).Error
 	return &user, err
 }
 
-func (r *userRepositoryImpl) Create(user *domain.User) error {
-	return r.db.Create(user).Error
+func (r *userRepoImpl) Register(tx *gorm.DB, firstName, lastName, tel string) (*uint, error) {
+	user := domain.User{
+		FirstName: firstName,
+		LastName:  lastName,
+		Tel:       tel,
+	}
+	result := tx.Create(&user)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &user.ID, nil
 }
 
-func (r *userRepositoryImpl) GetByUsername(username string) (*domain.UserLogin, error) {
-	var user domain.UserLogin
-	err := r.db.Model(&domain.User{}).Select("email", "password_hash").First(&user).Error
-	return &user, err
+func (r *userRepoImpl) ValidateTel(tel string) (bool, error) {
+	var count int64
+	err := r.db.Model(&domain.User{}).Where("tel = ?", tel).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, err
 }
