@@ -4,6 +4,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gotired/POSPharm/internal/domain"
 	"github.com/gotired/POSPharm/internal/usecase"
+	"gorm.io/gorm"
 )
 
 type Auth struct {
@@ -24,9 +25,11 @@ func (h *Auth) Login(c *fiber.Ctx) error {
 	if err := c.BodyParser(&loginDetail); err != nil {
 		return c.Status(400).JSON(fiber.Map{"error": err.Error()})
 	}
-
 	userDetail, err := h.user.GetUserLogin(loginDetail.Username)
 	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.Status(401).JSON(fiber.Map{"error": "mismatch username or password"})
+		}
 		return c.Status(500).JSON(fiber.Map{"error": err.Error()})
 	}
 	if userDetail == nil {
