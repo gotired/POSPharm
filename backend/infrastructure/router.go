@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gotired/POSPharm/internal/handler"
 	"github.com/gotired/POSPharm/internal/middleware"
 	"github.com/gotired/POSPharm/internal/repository"
@@ -28,7 +29,7 @@ func NewFiberApp(db *gorm.DB) *fiber.App {
 	branchHandler := handler.NewBranch(branchUsecase)
 
 	appMiddleware := middleware.NewMiddleware(authUsecase)
-
+	app.Use(cors.New())
 	api := app.Group("/api")
 
 	api.Post("/login", authHandler.Login)
