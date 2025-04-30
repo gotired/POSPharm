@@ -44,9 +44,9 @@ func (r *userCredentialRepoImpl) Register(tx *gorm.DB, userID uint, username str
 
 func (r *userCredentialRepoImpl) GetIDByUsernameEmail(username, email string) (*domain.UserLogin, error) {
 	var user domain.UserLogin
-	result := r.db.Model(&domain.UserCredential{}).Where("username = ?", username).Or("email = ?", email).First(&user)
-	if result.Error != nil {
-		return nil, result.Error
+	err := r.db.Model(&domain.UserCredential{}).Where("username = ?", username).Or("email = ?", email).First(&user).Error
+	if err != nil {
+		return nil, err
 	}
-	return &user, nil
+	return &user, err
 }
